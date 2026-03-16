@@ -104,13 +104,29 @@
     </div>
 
     <script>
+      // ── Decode the ?ref= param (Base64 encoded "type:id") ──
       var params = new URLSearchParams(window.location.search);
-      var type = params.get('type');
-      var id = params.get('id');
+      var ref = params.get('ref');
+      var type = null;
+      var id = null;
+
+      if (ref) {
+        try {
+          var decoded = atob(ref);        // decode Base64 → "service:abc123"
+          var parts = decoded.split(':'); // split into ["service", "abc123"]
+          type = parts[0] || null;
+          id = parts[1] || null;
+        } catch (e) {
+          type = null;
+          id = null;
+        }
+      }
+      // ── End of decode block ──
+
       var playStore =
         'https://play.google.com/store/apps/details?id=com.ozoservir_mobile';
       var ANON_KEY =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY2x1cWVhbWpuemptcHd4aWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYwMzgwOTcsImV4cCI6MjA1MTYxNDA5N30.cVSnVo93iF5HCNNm9kQPj_eNBUHC_8FOlb_lM8VEGMQ'; // ← paste your key here
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY2x1cWVhbWpuemptcHd4aWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYwMzgwOTcsImV4cCI6MjA1MTYxNDA5N30.cVSnVo93iF5HCNNm9kQPj_eNBUHC_8FOlb_lM8VEGMQ';
 
       function loadListing() {
         if (!type || !id) {
@@ -209,4 +225,3 @@
     </script>
   </body>
 </html>
-
