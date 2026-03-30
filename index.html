@@ -123,8 +123,8 @@
       }
       // ── End of decode block ──
 
-      var playStore =
-        'https://play.google.com/store/apps/details?id=com.ozoservir_mobile';
+      var playStore = 'https://play.google.com/store/apps/details?id=com.ozoservirandroid.app';
+  
       var ANON_KEY =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY2x1cWVhbWpuemptcHd4aWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYwMzgwOTcsImV4cCI6MjA1MTYxNDA5N30.cVSnVo93iF5HCNNm9kQPj_eNBUHC_8FOlb_lM8VEGMQ';
 
@@ -170,16 +170,11 @@
             var priceText = price ? currency + price : '';
             var badgeColor = type === 'service' ? '#9334E9' : '#2662E5';
             var badgeText = type === 'service' ? 'Service' : 'Sale';
-            var intentUrl =
-              'intent://listing/' +
-              type +
-              '/' +
-              id +
-              '#Intent;scheme=ozoservir' +
-              ';package=com.ozoservir_mobile' +
-              ';S.browser_fallback_url=' +
-              encodeURIComponent(playStore) +
-              ';end';
+            var intentUrl = 'intent://listing/' + type + '/' + id +
+                  '#Intent;scheme=ozoservir' +
+                  ';package=com.ozoservirandroid.app' +   
+                  ';S.browser_fallback_url=' + encodeURIComponent(playStore) +
+                  ';end';
 
             var html = '';
             if (image) {
