@@ -306,31 +306,38 @@
       //  PROFILE
       // ════════════════════════════════════════
       function loadProfile() {
-        Promise.all([
-          supaFetch('profiles', 'id=eq.' + id + '&select=first_name,last_name,profile_picture_url,city,bio,created_at,subscription_status,is_verified'),
-          supaFetch('sales',    'seller_id=eq.' + id + '&select=id,title,photos,price,currency'),
-          supaFetch('services', 'provider_id=eq.' + id + '&select=id,title,photos,price,currency'),
-        ]).then(function(results) {
+        supaFetch('profiles', 'id=eq.' + id + '&select=id,first_name,last_name,profile_picture_url,city,bio,created_at,rating,email_verified,phone_verified')
+          .then(function(profileRows) {
+            return Promise.all([
+              Promise.resolve(profileRows),
+              supaFetch('sales',    'seller_id=eq.'   + id + '&select=id,title,photos,price,currency'),
+              supaFetch('services', 'provider_id=eq.' + id + '&select=id,title,photos,price,currency'),
+            ]);
+          })
+          .then(function(results) {
           var profile  = results[0][0];
           var sales    = results[1] || [];
           var services = results[2] || [];
 
           if (!profile) {
             document.getElementById('content').innerHTML =
-              '<div class="center-msg">Profile not found<br><br>' +
-              '<a class="btn2" style="display:inline-block;margin-top:8px" href="' + playStore + '">Download Ozoservir</a></div>';
+              '<div class="center-msg">' +
+              '<p style="font-size:16px;margin-bottom:12px">Profile not found</p>' +
+              '<p style="color:#aaa;font-size:11px;margin-bottom:20px">ID: ' + escHtml(id) + '</p>' +
+              '<a class="btn2" style="display:inline-block" href="' + playStore + '">Download Ozoservir</a></div>';
             return;
           }
 
           var firstName  = profile.first_name || '';
           var lastName   = profile.last_name  || '';
           var fullName   = (firstName + ' ' + lastName).trim() || 'User';
-          var avatarUrl  = profile.profile_picture_url || '';
-          var city       = profile.city ? profile.city.toUpperCase() : 'LOCATION NOT SET';
-          var bio        = profile.bio || "Passionate about fashion and local services. Committed to delivering a high-quality, reliable experience on Ozoservir.";
+          var avatarUrl   = profile.profile_picture_url || '';
+          var city        = profile.city ? profile.city.toUpperCase() : null;
+          var bio         = profile.bio || "Passionate about fashion and local services. Committed to delivering a high-quality, reliable experience on Ozoservir.";
           var memberSince = formatDate(profile.created_at);
-          var isPremium  = profile.subscription_status === 'premium' || profile.subscription_status === 'active';
-          var isVerified = profile.is_verified;
+          var rating      = profile.rating ? parseFloat(profile.rating).toFixed(1) : '—';
+          var isVerified  = profile.email_verified || profile.phone_verified || false;
+          var isPremium   = false;
           var totalListings = sales.length + services.length;
           var iUrl = profileIntentUrl(id);
 
@@ -347,12 +354,12 @@
           html += '<div class="profile-name">' + escHtml(fullName) + (isVerified ? ' ✅' : '') + '</div>';
           html += '<div class="badge-row">';
           html += '<span class="pill pill-orange">⭐ PRO SELLER</span>';
-          html += '<span class="pill pill-ghost">📍 ' + escHtml(city) + '</span>';
+          if (city) html += '<span class="pill pill-ghost">📍 ' + escHtml(city) + '</span>';
           html += '</div></div></div></div>'; // close avatar-row, profile-header
 
           // ── Stats ──
           html += '<div class="stats-row">';
-          html += '<div class="stat"><div class="stat-val">4.8</div><div class="stat-lbl">RATING</div></div>';
+          html += '<div class="stat"><div class="stat-val">' + rating + '</div><div class="stat-lbl">RATING</div></div>';
           html += '<div class="stat"><div class="stat-val">' + sales.length + '+</div><div class="stat-lbl">SALES</div></div>';
           html += '<div class="stat"><div class="stat-val">' + totalListings + '</div><div class="stat-lbl">LISTINGS</div></div>';
           html += '</div>';
@@ -363,7 +370,7 @@
           html += '<div class="bio-text">' + escHtml(bio) + '</div>';
           html += '<div class="meta-row">';
           html += '<div class="meta-item"><div class="meta-key">MEMBER SINCE</div><div class="meta-val">' + memberSince + '</div></div>';
-          html += '<div class="meta-item"><div class="meta-key">STATUS</div><div class="meta-val">' + (isPremium ? '⭐ Premium' : 'Standard') + '</div></div>';
+          html += '<div class="meta-item"><div class="meta-key">VERIFIED</div><div class="meta-val">' + (isVerified ? '✅ Verified' : 'Pending') + '</div></div>';
           html += '</div></div>';
 
           // ── Listings carousel ──
@@ -440,6 +447,7 @@
     </script>
   </body>
 </html>
+
 
 
 
