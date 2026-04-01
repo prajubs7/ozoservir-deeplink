@@ -359,7 +359,7 @@
 
           // ── Stats ──
           html += '<div class="stats-row">';
-          html += '<div class="stat"><div class="stat-val">' + rating + '</div><div class="stat-lbl">RATING</div></div>';
+          // html += '<div class="stat"><div class="stat-val">' + rating + '</div><div class="stat-lbl">RATING</div></div>';
           html += '<div class="stat"><div class="stat-val">' + sales.length + '+</div><div class="stat-lbl">SALES</div></div>';
           html += '<div class="stat"><div class="stat-val">' + totalListings + '</div><div class="stat-lbl">LISTINGS</div></div>';
           html += '</div>';
@@ -374,22 +374,22 @@
           html += '</div></div>';
 
           // ── Listings carousel ──
-          html += '<div class="listings-section">';
-          html += '<div class="listings-header"><div class="listings-bar"></div><div><div class="listings-title">Listings (' + totalListings + ')</div><div class="listings-sub">EXPLORE ' + escHtml(fullName.toUpperCase()) + '\'S OFFERS</div></div></div>';
+          // html += '<div class="listings-section">';
+          // html += '<div class="listings-header"><div class="listings-bar"></div><div><div class="listings-title">Listings (' + totalListings + ')</div><div class="listings-sub">EXPLORE ' + escHtml(fullName.toUpperCase()) + '\'S OFFERS</div></div></div>';
 
-          if (totalListings > 0) {
-            html += '<div class="carousel">';
-            sales.forEach(function(item) {
-              html += buildListingCard(item, 'sale', id);
-            });
-            services.forEach(function(item) {
-              html += buildListingCard(item, 'service', id);
-            });
-            html += '</div>';
-          } else {
-            html += '<div class="no-listings">No listings yet</div>';
-          }
-          html += '</div>';
+          // if (totalListings > 0) {
+          //   html += '<div class="carousel">';
+          //   sales.forEach(function(item) {
+          //     html += buildListingCard(item, 'sale', id);
+          //   });
+          //   services.forEach(function(item) {
+          //     html += buildListingCard(item, 'service', id);
+          //   });
+          //   html += '</div>';
+          // } else {
+          //   html += '<div class="no-listings">No listings yet</div>';
+          // }
+          // html += '</div>';
 
           // ── Trust badges ──
           html += '<div class="trust-row">';
