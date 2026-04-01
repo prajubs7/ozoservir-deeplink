@@ -4,6 +4,451 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ozoservir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: #f0f4f3;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      /* ── Shared Card Shell ── */
+      .card {
+        background: #fff;
+        border-radius: 20px;
+        max-width: 420px;
+        width: 100%;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+      }
+
+      .logo-bar {
+        text-align: center;
+        padding: 18px 24px 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #225b56;
+        letter-spacing: 1px;
+      }
+
+      /* ── Listing layout (unchanged) ── */
+      .listing-wrap { padding: 20px 24px 28px; text-align: center; }
+      .img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 16px; background: #e0e0e0; }
+      .badge { display: inline-block; color: #fff; font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 20px; margin-bottom: 12px; }
+      .listing-title { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+      .price { font-size: 24px; font-weight: 700; color: #225b56; margin-bottom: 8px; }
+      .desc { font-size: 14px; color: #666; margin-bottom: 24px; line-height: 1.55; }
+
+      /* ── Profile layout ── */
+      .profile-header {
+        background: linear-gradient(160deg, #225b56 0%, #2e7a73 100%);
+        padding: 28px 24px 22px;
+        position: relative;
+      }
+      .profile-avatar-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .avatar {
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.25);
+        object-fit: cover;
+        background: #fff;
+        flex-shrink: 0;
+      }
+      .avatar-placeholder {
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.25);
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #225b56;
+        flex-shrink: 0;
+      }
+      .profile-name-col { flex: 1; min-width: 0; }
+      .profile-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 8px;
+        line-height: 1.2;
+      }
+      .badge-row { display: flex; gap: 6px; flex-wrap: wrap; }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .pill-orange { background: #FE9901; color: #184743; }
+      .pill-ghost  { background: rgba(255,255,255,0.25); color: #fff; border: 0.5px solid rgba(255,255,255,0.6); }
+
+      /* Stats row */
+      .stats-row {
+        display: flex;
+        background: #fff;
+        border-radius: 16px;
+        margin: -26px 20px 0;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+        position: relative;
+        z-index: 2;
+        overflow: hidden;
+      }
+      .stat {
+        flex: 1;
+        text-align: center;
+        padding: 16px 8px;
+        border-right: 1px solid #f0f0f0;
+      }
+      .stat:last-child { border-right: none; }
+      .stat-val { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+      .stat-lbl { font-size: 10px; font-weight: 600; color: #aaa; letter-spacing: 1px; margin-top: 2px; }
+
+      /* About */
+      .about-section {
+        margin: 20px 20px 0;
+        background: #f8faf9;
+        border-radius: 16px;
+        padding: 20px;
+      }
+      .section-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #888; margin-bottom: 8px; }
+      .bio-text { font-size: 13px; color: #555; line-height: 1.6; }
+      .meta-row { display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
+      .meta-item { }
+      .meta-key { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: #aaa; }
+      .meta-val { font-size: 11px; font-weight: 600; color: #333; margin-top: 1px; }
+
+      /* Listings carousel */
+      .listings-section { margin: 20px 0 0; }
+      .listings-header { display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 12px; }
+      .listings-bar { width: 4px; height: 42px; background: #4D948E; border-radius: 2px; flex-shrink: 0; }
+      .listings-title { font-size: 17px; font-weight: 700; color: #1a1a1a; }
+      .listings-sub { font-size: 11px; color: #aaa; margin-top: 1px; letter-spacing: 0.5px; }
+      .carousel {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 4px 20px 12px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .carousel::-webkit-scrollbar { display: none; }
+      .listing-card {
+        flex-shrink: 0;
+        width: 170px;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        cursor: pointer;
+        transition: transform 0.15s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+      .listing-card:hover { transform: translateY(-2px); }
+      .card-img { width: 100%; height: 110px; object-fit: cover; background: #e8e8e8; display: block; }
+      .card-img-placeholder { width: 100%; height: 110px; background: linear-gradient(135deg, #e8f0ef, #d0e6e3); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+      .card-body { padding: 10px 10px 12px; }
+      .card-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; color: #fff; display: inline-block; margin-bottom: 5px; }
+      .card-title { font-size: 12px; font-weight: 600; color: #1a1a1a; line-height: 1.3; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .card-price { font-size: 13px; font-weight: 700; color: #225b56; }
+      .no-listings { padding: 24px; text-align: center; color: #bbb; font-size: 13px; }
+
+      /* Badges */
+      .trust-row {
+        display: flex;
+        gap: 10px;
+        padding: 14px 20px 0;
+      }
+      .trust-card {
+        flex: 1;
+        background: #f8faf9;
+        border-radius: 16px;
+        padding: 14px 8px;
+        text-align: center;
+      }
+      .trust-icon { font-size: 24px; margin-bottom: 6px; }
+      .trust-lbl { font-size: 8px; font-weight: 700; letter-spacing: 0.8px; color: #225b56; line-height: 1.3; }
+
+      /* CTA buttons */
+      .btn-wrap { padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 10px; }
+      .btn1 { display: block; background: #225b56; color: #fff; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 700; text-align: center; letter-spacing: 0.3px; }
+      .btn2 { display: block; background: #fff; color: #225b56; border: 2px solid #225b56; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-size: 13px; font-weight: 600; text-align: center; }
+      .status-note { text-align: center; font-size: 12px; color: #bbb; padding: 0 20px 18px; }
+
+      /* Error / loading */
+      .center-msg { padding: 40px 24px; text-align: center; color: #888; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="logo-bar">Ozoservir</div>
+      <div id="content"><div class="center-msg">Loading…</div></div>
+    </div>
+
+    <script>
+      var playStore = 'https://play.google.com/store/apps/details?id=com.ozoservirandroid.app';
+      var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY2x1cWVhbWpuemptcHd4aWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYwMzgwOTcsImV4cCI6MjA1MTYxNDA5N30.cVSnVo93iF5HCNNm9kQPj_eNBUHC_8FOlb_lM8VEGMQ';
+      var BASE = 'https://wrcluqeamjnzjmpwxiet.supabase.co/rest/v1/';
+
+      // ── Decode ?ref= ──
+      var params = new URLSearchParams(window.location.search);
+      var ref = params.get('ref');
+      var type = null, id = null, sellerId = '';
+
+      if (ref) {
+        try {
+          var decoded = atob(ref);
+          var parts = decoded.split(':');
+          type = parts[0] || null;
+          id   = parts[1] || null;
+          sellerId = parts[2] || '';
+        } catch(e) {}
+      }
+
+      function supaFetch(table, query) {
+        return fetch(BASE + table + '?' + query, {
+          headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY }
+        }).then(function(r){ return r.json(); });
+      }
+
+      function intentUrl(linkType, linkId, lSellerId) {
+        return 'intent://listing/' + linkType + '/' + linkId + '/' + (lSellerId || '') +
+          '#Intent;scheme=ozoservir' +
+          ';package=com.ozoservirandroid.app' +
+          ';S.browser_fallback_url=' + encodeURIComponent(playStore) +
+          ';end';
+      }
+
+      function profileIntentUrl(userId) {
+        return 'intent://profile/' + userId +
+          '#Intent;scheme=ozoservir' +
+          ';package=com.ozoservirandroid.app' +
+          ';S.browser_fallback_url=' + encodeURIComponent(playStore) +
+          ';end';
+      }
+
+      function escHtml(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function initials(first, last) {
+        return ((first||'')[0]||(last||'')[0]||'U').toUpperCase();
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      }
+
+      // ════════════════════════════════════════
+      //  LISTING (service / sale)
+      // ════════════════════════════════════════
+      function loadListing() {
+        var table = type === 'service' ? 'services' : 'sales';
+        supaFetch(table, 'id=eq.' + id + '&select=title,description,photos,price,currency')
+          .then(function(data) {
+            var item = data[0];
+            if (!item) {
+              document.getElementById('content').innerHTML =
+                '<div class="listing-wrap"><p style="color:#666;margin-bottom:16px">Listing not found</p>' +
+                '<a class="btn2" href="' + playStore + '">Download Ozoservir</a></div>';
+              return;
+            }
+            var title    = item.title || 'Ozoservir Listing';
+            var desc     = item.description || '';
+            var image    = item.photos && item.photos[0] ? item.photos[0] : '';
+            var priceText = item.price ? (item.currency || '') + item.price : '';
+            var badgeColor = type === 'service' ? '#9334E9' : '#2662E5';
+            var badgeText  = type === 'service' ? 'Service' : 'Sale';
+            var iUrl = intentUrl(type, id, sellerId);
+
+            var html = '<div class="listing-wrap">';
+            if (image) html += '<img class="img" src="' + escHtml(image) + '" onerror="this.style.display=\'none\'">';
+            html += '<div class="badge" style="background:' + badgeColor + '">' + badgeText + '</div>';
+            html += '<h2 class="listing-title">' + escHtml(title) + '</h2>';
+            if (priceText) html += '<div class="price">' + escHtml(priceText) + '</div>';
+            html += '<p class="desc">' + escHtml(desc) + '</p>';
+            html += '<a class="btn1" href="' + iUrl + '">Open in Ozoservir App</a>';
+            html += '<a class="btn2" style="margin-top:10px" href="' + playStore + '">Download Ozoservir — It\'s Free</a>';
+            html += '<p class="status" style="margin-top:10px;font-size:12px;color:#bbb">Tap above to open the app</p>';
+            html += '</div>';
+            document.getElementById('content').innerHTML = html;
+          })
+          .catch(function() {
+            document.getElementById('content').innerHTML =
+              '<div class="listing-wrap"><p style="color:#666;margin-bottom:16px">Something went wrong</p>' +
+              '<a class="btn2" href="' + playStore + '">Download Ozoservir</a></div>';
+          });
+      }
+
+      // ════════════════════════════════════════
+      //  PROFILE
+      // ════════════════════════════════════════
+      function loadProfile() {
+        Promise.all([
+          supaFetch('profiles', 'id=eq.' + id + '&select=first_name,last_name,profile_picture_url,city,bio,created_at,subscription_status,is_verified'),
+          supaFetch('sales',    'seller_id=eq.' + id + '&select=id,title,photos,price,currency'),
+          supaFetch('services', 'provider_id=eq.' + id + '&select=id,title,photos,price,currency'),
+        ]).then(function(results) {
+          var profile  = results[0][0];
+          var sales    = results[1] || [];
+          var services = results[2] || [];
+
+          if (!profile) {
+            document.getElementById('content').innerHTML =
+              '<div class="center-msg">Profile not found<br><br>' +
+              '<a class="btn2" style="display:inline-block;margin-top:8px" href="' + playStore + '">Download Ozoservir</a></div>';
+            return;
+          }
+
+          var firstName  = profile.first_name || '';
+          var lastName   = profile.last_name  || '';
+          var fullName   = (firstName + ' ' + lastName).trim() || 'User';
+          var avatarUrl  = profile.profile_picture_url || '';
+          var city       = profile.city ? profile.city.toUpperCase() : 'LOCATION NOT SET';
+          var bio        = profile.bio || "Passionate about fashion and local services. Committed to delivering a high-quality, reliable experience on Ozoservir.";
+          var memberSince = formatDate(profile.created_at);
+          var isPremium  = profile.subscription_status === 'premium' || profile.subscription_status === 'active';
+          var isVerified = profile.is_verified;
+          var totalListings = sales.length + services.length;
+          var iUrl = profileIntentUrl(id);
+
+          // ── Header ──
+          var html = '<div class="profile-header">';
+          html += '<div class="profile-avatar-row">';
+          if (avatarUrl) {
+            html += '<img class="avatar" src="' + escHtml(avatarUrl) + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">';
+            html += '<div class="avatar-placeholder" style="display:none">' + initials(firstName, lastName) + '</div>';
+          } else {
+            html += '<div class="avatar-placeholder">' + initials(firstName, lastName) + '</div>';
+          }
+          html += '<div class="profile-name-col">';
+          html += '<div class="profile-name">' + escHtml(fullName) + (isVerified ? ' ✅' : '') + '</div>';
+          html += '<div class="badge-row">';
+          html += '<span class="pill pill-orange">⭐ PRO SELLER</span>';
+          html += '<span class="pill pill-ghost">📍 ' + escHtml(city) + '</span>';
+          html += '</div></div></div></div>'; // close avatar-row, profile-header
+
+          // ── Stats ──
+          html += '<div class="stats-row">';
+          html += '<div class="stat"><div class="stat-val">4.8</div><div class="stat-lbl">RATING</div></div>';
+          html += '<div class="stat"><div class="stat-val">' + sales.length + '+</div><div class="stat-lbl">SALES</div></div>';
+          html += '<div class="stat"><div class="stat-val">' + totalListings + '</div><div class="stat-lbl">LISTINGS</div></div>';
+          html += '</div>';
+
+          // ── About ──
+          html += '<div class="about-section">';
+          html += '<div class="section-label">ABOUT</div>';
+          html += '<div class="bio-text">' + escHtml(bio) + '</div>';
+          html += '<div class="meta-row">';
+          html += '<div class="meta-item"><div class="meta-key">MEMBER SINCE</div><div class="meta-val">' + memberSince + '</div></div>';
+          html += '<div class="meta-item"><div class="meta-key">STATUS</div><div class="meta-val">' + (isPremium ? '⭐ Premium' : 'Standard') + '</div></div>';
+          html += '</div></div>';
+
+          // ── Listings carousel ──
+          html += '<div class="listings-section">';
+          html += '<div class="listings-header"><div class="listings-bar"></div><div><div class="listings-title">Listings (' + totalListings + ')</div><div class="listings-sub">EXPLORE ' + escHtml(fullName.toUpperCase()) + '\'S OFFERS</div></div></div>';
+
+          if (totalListings > 0) {
+            html += '<div class="carousel">';
+            sales.forEach(function(item) {
+              html += buildListingCard(item, 'sale', id);
+            });
+            services.forEach(function(item) {
+              html += buildListingCard(item, 'service', id);
+            });
+            html += '</div>';
+          } else {
+            html += '<div class="no-listings">No listings yet</div>';
+          }
+          html += '</div>';
+
+          // ── Trust badges ──
+          html += '<div class="trust-row">';
+          html += '<div class="trust-card"><div class="trust-icon">🛡️</div><div class="trust-lbl">IDENTITY<br>VERIFIED</div></div>';
+          html += '<div class="trust-card"><div class="trust-icon">🏅</div><div class="trust-lbl">TOP SELLER<br>2025</div></div>';
+          html += '<div class="trust-card"><div class="trust-icon">💬</div><div class="trust-lbl">QUICK<br>RESPONDER</div></div>';
+          html += '</div>';
+
+          // ── Buttons ──
+          html += '<div class="btn-wrap">';
+          html += '<a class="btn1" href="' + iUrl + '">View Profile in App</a>';
+          html += '<a class="btn2" href="' + playStore + '">Download Ozoservir — It\'s Free</a>';
+          html += '</div>';
+          html += '<p class="status-note">Tap above to open the full profile in the app</p>';
+
+          document.getElementById('content').innerHTML = html;
+        }).catch(function(err) {
+          console.error(err);
+          document.getElementById('content').innerHTML =
+            '<div class="center-msg">Something went wrong<br><br>' +
+            '<a class="btn2" style="display:inline-block;margin-top:8px" href="' + playStore + '">Download Ozoservir</a></div>';
+        });
+      }
+
+      function buildListingCard(item, listingType, lSellerId) {
+        var badgeColor = listingType === 'service' ? '#9334E9' : '#2662E5';
+        var badgeText  = listingType === 'service' ? 'Service' : 'Sale';
+        var imgUrl = item.photos && item.photos[0] ? item.photos[0] : '';
+        var priceText = item.price ? (item.currency || '') + item.price : '';
+        var iUrl = intentUrl(listingType, item.id, lSellerId);
+
+        var html = '<a class="listing-card" href="' + escHtml(iUrl) + '">';
+        if (imgUrl) {
+          html += '<img class="card-img" src="' + escHtml(imgUrl) + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">';
+          html += '<div class="card-img-placeholder" style="display:none">' + (listingType === 'service' ? '🔧' : '🛍️') + '</div>';
+        } else {
+          html += '<div class="card-img-placeholder">' + (listingType === 'service' ? '🔧' : '🛍️') + '</div>';
+        }
+        html += '<div class="card-body">';
+        html += '<span class="card-badge" style="background:' + badgeColor + '">' + badgeText + '</span>';
+        html += '<div class="card-title">' + escHtml(item.title || 'Untitled') + '</div>';
+        if (priceText) html += '<div class="card-price">' + escHtml(priceText) + '</div>';
+        html += '</div></a>';
+        return html;
+      }
+
+      // ── Route ──
+      if (!type || !id) {
+        document.getElementById('content').innerHTML = '<div class="center-msg">Invalid link</div>';
+      } else if (type === 'profile') {
+        loadProfile();
+      } else {
+        loadListing(); // service or sale
+      }
+    </script>
+  </body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ozoservir</title>
     <style>
       * {
         box-sizing: border-box;
@@ -112,10 +557,11 @@
 
       if (ref) {
         try {
-          var decoded = atob(ref);        // decode Base64 → "service:abc123"
-          var parts = decoded.split(':'); // split into ["service", "abc123"]
+          var decoded = atob(ref);    
+          var parts = decoded.split(':'); 
           type = parts[0] || null;
           id = parts[1] || null;
+          var sellerId = parts[2] || '';
         } catch (e) {
           type = null;
           id = null;
@@ -170,7 +616,7 @@
             var priceText = price ? currency + price : '';
             var badgeColor = type === 'service' ? '#9334E9' : '#2662E5';
             var badgeText = type === 'service' ? 'Service' : 'Sale';
-            var intentUrl = 'intent://listing/' + type + '/' + id +
+            var intentUrl = 'intent://listing/' + type + '/' + id + '/' + sellerId +
                   '#Intent;scheme=ozoservir' +
                   ';package=com.ozoservirandroid.app' +   
                   ';S.browser_fallback_url=' + encodeURIComponent(playStore) +
@@ -219,4 +665,4 @@
       loadListing();
     </script>
   </body>
-</html>
+</html> -->
