@@ -271,7 +271,7 @@
       //  LISTING (service / sale)
       // ════════════════════════════════════════
       function loadListing() {
-        var table = type === 'service' ? 'services' : 'sales';
+        var table = type === 'services' ? 'services' : 'sales';
         supaFetch(table, 'id=eq.' + id + '&select=title,description,photos,price,currency')
           .then(function(data) {
             var item = data[0];
@@ -285,8 +285,8 @@
             var desc     = item.description || '';
             var image    = item.photos && item.photos[0] ? item.photos[0] : '';
             var priceText = item.price ? (item.currency || '') + item.price : '';
-            var badgeColor = type === 'service' ? '#9334E9' : '#2662E5';
-            var badgeText  = type === 'service' ? 'Service' : 'Sale';
+            var badgeColor = type === 'services' ? '#9334E9' : '#2662E5';
+            var badgeText  = type === 'services' ? 'Service' : 'Sale';
             var iUrl = intentUrl(type, id, sellerId);
 
             var html = '<div class="listing-wrap">';
